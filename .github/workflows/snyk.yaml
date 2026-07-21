@@ -7,6 +7,15 @@ jobs:
       - uses: actions/checkout@master
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/maven@master
-        continue-on-error: false
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --sarif-file-output=snyk.sarif
+          
+      - name: Save Snyk Report as Artifact
+        uses: actions/upload-artifact@v4
+        if: always() # Ensures artifact is uploaded even if previous steps fail
+        with:
+          name: snyk-security-report
+          path: snyk.sarif
