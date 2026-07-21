@@ -1,21 +1,32 @@
 name: Example workflow for Maven using Snyk
+
 on: push
+
 jobs:
   security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/maven@master
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          
+      - name: Install Snyk CLI and snyk-to-html
+        run: |
+          npm install -g snyk snyk-to-html
+
+      - name: Run Snyk and generate HTML report
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --sarif-file-output=snyk.sarif
-          
-      - name: Save Snyk Report as Artifact
+        run: |
+          snyk test --json | snyk-to-html -o snyk-report.html
+
+      - name: Save Snyk HTML Report as Artifact
         uses: actions/upload-artifact@v4
-        if: always() # Ensures artifact is uploaded even if previous steps fail
+        if: always()
         with:
-          name: snyk-security-report
-          path: snyk.sarif
+          name: snyk-html-report
+          path: snyk-report.html
