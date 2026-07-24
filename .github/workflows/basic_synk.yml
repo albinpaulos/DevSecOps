@@ -15,8 +15,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run Snyk to check for vulnerabilities (SCA)
-        uses: snyk/actions/maven@master
+      # 1. Install the Snyk CLI directly onto the runner
+      - name: Install Snyk CLI
+        uses: snyk/actions/setup@master
+
+      # 2. Run the Snyk CLI command natively
+      - name: Run Snyk SCA scan
+        run: snyk test
         continue-on-error: true
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }} 
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
