@@ -1,20 +1,38 @@
 name: Run SonarQube with Maven
 
-on: push
-
+on:
+  push:
+    branches:
+      - main # Note: Change this to 'main' if that is your repository's default branch
 jobs:
   build:
+    name: Build and analyze
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 21
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'zulu'
-        cache: maven
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required by SonarQube to accurately analyze blame information
 
-    - name: Build with Maven cloud
-      run:  mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=albinpaulos -Dsonar.organization=albinpaulos -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SONAR_TOKEN }}
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'zulu'
+          cache: maven # This built-in feature replaces the manual ~/.m2 cache step
+
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Build and analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar 
+          -Dsonar.projectKey=albinpaulos_sonar-test 
+          -Dsonar.organization=albinpaulos 
+          -Dsonar.host.url=https://sonarcloud.io
