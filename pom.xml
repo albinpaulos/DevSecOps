@@ -5,35 +5,23 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>java-reachable-goof</artifactId> 
+    <artifactId>java-reachable-goof</artifactId>
     <version>1.0-SNAPSHOT</version>
-    
     <properties>
-        <!-- Note: Your GitHub Actions pipeline is using JDK 17, 
-             you may want to update these to 17 if you aren't strictly testing legacy code -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
-    
     <dependencies>
-        <!-- Upgraded from 3.2.1 to 3.2.2 to fix severe Deserialization RCE (CVE-2015-7501) -->
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.2.2</version>
+            <version>3.2.1</version>
         </dependency>
-        
-        <!-- Upgraded from 1.0.0-beta2 to a stable release to fix transitive vulnerabilities 
-             (like Jackson-databind RCEs and Guava issues) -->
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-common</artifactId>
-            <version>1.0.0-M2.1</version> 
+            <version>1.0.0-beta2</version>
         </dependency>
     </dependencies>
 
 </project>
-    </dependencies>
-
-
-</project> 
